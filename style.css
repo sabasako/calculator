@@ -7,6 +7,18 @@ body {
   backdrop-filter: blur(102px);
   border-radius: 39px;
   width: 375px;
-  height: 735px;
-  margin: 100px auto;
+  height: 600px;
+  /* margin: 100px auto; */
+  margin: 0 auto;
 }
+
+/* .calculator-shade {
+  width: 357px;
+  height: 735px;
+  background: rgba(96, 190, 255, 0.55);
+  filter: blur(123px);
+  border-radius: 39px;
+  position: absolute;
+  left: 50%;
+  top: 20%;
+} */
