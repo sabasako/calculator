@@ -1,0 +1,12 @@
+body {
+  background: #daf0ff;
+}
+
+.calculator {
+  background: #f7f8fb;
+  backdrop-filter: blur(102px);
+  border-radius: 39px;
+  width: 375px;
+  height: 735px;
+  margin: 100px auto;
+}
