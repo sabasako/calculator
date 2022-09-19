@@ -40,6 +40,8 @@ const specialDel = document.querySelector(".special-del");
 let firstOperand = "";
 let secondOperand = "";
 let currentOperation;
+let operation = false;
+let operationTemp;
 let temp;
 
 window.onload = () => {
@@ -172,13 +174,17 @@ displayBtn.forEach((item) => {
 
 specialAc.addEventListener("click", () => {
   firstOperand = "0";
+  secondOperand = "";
   displayText.textContent = "0";
   displayTextBack.textContent = "";
+  operation = false;
+  operationTemp = false;
 });
 
 specialDel.addEventListener("click", () => {
   firstOperand = firstOperand.slice(0, -1);
   displayText.textContent = firstOperand;
+  if (firstOperand == "") firstOperand = "0";
 });
 
 specialDot.addEventListener("click", () => {
@@ -191,36 +197,65 @@ specialDot.addEventListener("click", () => {
 
 specialBtn.forEach((item) => {
   item.addEventListener("click", () => {
-    if (displayTextBack.textContent.includes(currentOperation)) {
-      currentOperation = item.value;
-      displayTextBack.textContent = `${round(
-        operate(currentOperation, secondOperand, firstOperand)
-      )} ${currentOperation}`;
-      secondOperand = `${round(
-        operate(currentOperation, secondOperand, firstOperand)
-      )}`;
-      firstOperand = "";
-      return;
-    }
-    // Fixing a bug, if you want to change operator in the middle of a calculation;
-    if (firstOperand == "") {
-      firstOperand += temp;
-    }
+    if (operationTemp == true) {
+      operation = true;
+      if (firstOperand == "") {
+        firstOperand += temp;
+      }
 
-    currentOperation = item.value;
-    secondOperand = firstOperand;
-    displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
-    temp = firstOperand;
-    firstOperand = "";
+      currentOperation = item.value;
+      secondOperand = firstOperand;
+      displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
+      temp = firstOperand;
+      firstOperand = "";
+      operationTemp = false;
+    } else if (
+      displayTextBack.textContent.includes("+") ||
+      displayTextBack.textContent.includes("-") ||
+      displayTextBack.textContent.includes("*") ||
+      displayTextBack.textContent.includes("/")
+    ) {
+      if (firstOperand == "") {
+        displayTextBack.textContent = `${secondOperand} ${item.value}`;
+        currentOperation = item.value;
+      } else {
+        secondOperand = round(
+          operate(currentOperation, secondOperand, firstOperand)
+        );
+        currentOperation = item.value;
+        displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
+        displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
+        firstOperand = "";
+        operation = true;
+      }
+    } else {
+      // Fixing a bug, if you want to change operator in the middle of a calculation;
+      operation = true;
+      if (firstOperand == "") {
+        firstOperand += temp;
+      }
+
+      currentOperation = item.value;
+      secondOperand = firstOperand;
+      displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
+      temp = firstOperand;
+      firstOperand = "";
+    }
   });
 });
 
 specialEqual.addEventListener("click", () => {
+  if (operation == false || firstOperand == "") return;
   displayTextBack.textContent = `${secondOperand} ${currentOperation} ${firstOperand} =`;
-  displayText.textContent = round(
+  let displayOutput = round(
     operate(currentOperation, secondOperand, firstOperand)
   );
+  if (String(displayOutput).length >= 17) {
+  } else {
+    displayText.textContent = displayOutput;
+  }
 
   // If user presses another operation when equal button was already pressed, then we need to use that operation on previous answer.
   firstOperand = displayText.textContent;
+  operationTemp = true;
 });
