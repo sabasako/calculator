@@ -15,25 +15,8 @@ const displayBtn = document.querySelectorAll(".display-btn");
 const displayTextBack = document.querySelector(".display-text-back");
 const displayText = document.querySelector(".display-text");
 const display = document.querySelector(".display");
-
-//
-
-const specialZero = document.querySelector(".special-zero");
-const special1 = document.querySelector(".special-1");
-const special2 = document.querySelector(".special-2");
-const special3 = document.querySelector(".special-3");
-const special4 = document.querySelector(".special-4");
-const special5 = document.querySelector(".special-5");
-const special6 = document.querySelector(".special-6");
-const special7 = document.querySelector(".special-7");
-const special8 = document.querySelector(".special-8");
-const special9 = document.querySelector(".special-9");
 const specialDot = document.querySelector(".special-dot");
 const specialEqual = document.querySelector(".special-equal");
-const specialDivide = document.querySelector(".special-divide");
-const specialMultiply = document.querySelector(".special-multiply");
-const specialSubtract = document.querySelector(".special--");
-const specialPlus = document.querySelector(".special-plus");
 const specialAc = document.querySelector(".special-ac");
 const specialDel = document.querySelector(".special-del");
 
@@ -44,6 +27,7 @@ let operation = false;
 let operationTemp;
 let temp;
 
+// Dark screen to be chosen automatically
 window.onload = () => {
   darkBtn.forEach((item) => {
     item.click();
@@ -54,7 +38,7 @@ window.onload = () => {
 //        FUNCTIONS         //
 //////////////////////////////
 
-// This is function for turning on a light mode
+// turns on a light mode;
 function lightMode() {
   darkDiv.classList.add("hidden");
   lightDiv.classList.remove("hidden");
@@ -89,7 +73,7 @@ function lightMode() {
   display.style.backgroundColor = "#fff";
 }
 
-// This is function for turning on a dark mode
+// turns on a dark mode;
 function darkMode() {
   darkDiv.classList.remove("hidden");
   lightDiv.classList.add("hidden");
@@ -125,137 +109,201 @@ function darkMode() {
   display.style.backgroundColor = "#1e1f22";
 }
 
+// calculates a and b with specific operation, if operator = +, a = 3, b = 4, function will return 3 + 4;
 function operate(operator, a, b) {
-  // we can use math operations only on numbers, not strings
+  // we can use math operations only on numbers, not strings;
   a = Number(a);
   b = Number(b);
   if (operator == "+") {
-    return add(a, b);
+    return a + b;
   } else if (operator == "-") {
-    return subtract(a, b);
+    return a - b;
   } else if (operator == "/") {
-    return divide(a, b);
+    return a / b;
   } else if (operator == "*") {
-    return multiply(a, b);
+    return a * b;
   }
 }
 
-const add = (a, b) => a + b;
-const subtract = (a, b) => a - b;
-const multiply = (a, b) => a * b;
-const divide = (a, b) => a / b;
-
+// rounds to one thousandth;
 const round = (a) => Math.round(a * 1000) / 1000;
 
-//////////////////////////////
-//      EventListeners      //
-//////////////////////////////
+// i had a repeated code and took care of it;
+function displayOperator() {
+  operation = true;
+  if (firstOperand == "") {
+    firstOperand += temp;
+  }
 
-// light mode event listener
-lightBtn.forEach((item) => {
-  item.addEventListener("click", lightMode);
-});
+  secondOperand = firstOperand;
+  displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
+  temp = firstOperand;
+  firstOperand = "";
+}
 
-// dark mode event listener
-darkBtn.forEach((item) => {
-  item.addEventListener("click", darkMode);
-});
+// Displays numbers on calculator;
+function addNumbers(item) {
+  // if numbers are >= 17 stop execution, because there isn't enough space. 17 isn't some magical number, I checked and display has space only for 17 numbers ;
+  if (firstOperand.length >= 17) return;
+  // fix for using dot(.)
+  if (firstOperand.slice(0, 1) == 0 && firstOperand.slice(1, 2) != ".") {
+    firstOperand = firstOperand.slice(1);
+  }
+  // I change fontSize because there are some cases when numbers still get too big, so i needed to make them smaller;
+  displayText.style.fontSize = "32px";
+  firstOperand += item;
+  displayText.textContent = firstOperand;
+}
 
-displayBtn.forEach((item) => {
-  item.addEventListener("click", () => {
-    if (firstOperand.length >= 17) return;
-    if (firstOperand.slice(0, 1) == 0 && firstOperand.slice(1, 2) != ".") {
-      firstOperand = firstOperand.slice(1);
-    }
-    firstOperand += item.value;
-    displayText.textContent = firstOperand;
-  });
-});
-
-specialAc.addEventListener("click", () => {
+// "Ac" button, removes everything on calculator and displays 0;
+function removeAc() {
   firstOperand = "0";
   secondOperand = "";
   displayText.textContent = "0";
   displayTextBack.textContent = "";
   operation = false;
   operationTemp = false;
-});
+  displayText.style.fontSize = "32px";
+}
 
-specialDel.addEventListener("click", () => {
+// removes number one by one;
+function del() {
   firstOperand = firstOperand.slice(0, -1);
   displayText.textContent = firstOperand;
   if (firstOperand == "") firstOperand = "0";
-});
+  if (firstOperand.length < 17) {
+    displayText.style.fontSize = "32px";
+  }
+}
 
-specialDot.addEventListener("click", () => {
+// makes dots work;
+function dots() {
+  // if numbers are >= 17 stop execution, because there isn't enough space.;
   if (firstOperand.includes(specialDot.value) || firstOperand.length >= 17)
     return;
+  // if user presses . before 0, then it should automatically display it;
   if (firstOperand == "") firstOperand = "0";
   firstOperand += specialDot.value;
   displayText.textContent = firstOperand;
+}
+
+// equal function;
+function equal() {
+  // same as before, you can't divide by 0;
+  if (displayTextBack.textContent.includes("/") && firstOperand == "0") {
+    alert("'You can't divide by 0!");
+    firstOperand = "";
+    return;
+  }
+  // makes equal unclickable
+  if (operation == false || firstOperand == "") return;
+  // displays our equation in the back;
+  displayTextBack.textContent = `${secondOperand} ${currentOperation} ${firstOperand} =`;
+  // displayOutput is a final value, which we got from our calculation;
+  let displayOutput = round(
+    operate(currentOperation, secondOperand, firstOperand)
+  );
+  // decreasing numbers font size if it is bigger than display;
+  if (String(displayOutput).length >= 17) {
+    displayText.style.fontSize = "26px";
+    displayText.textContent = displayOutput;
+  } else {
+    // if it isn't bigger than we don't need to decrease it;
+    displayText.textContent = displayOutput;
+  }
+  // if user presses another operation when equal button was already pressed, then we need to use that operation on previous answer.
+  firstOperand = displayText.textContent;
+  operationTemp = true;
+  operation = false;
+}
+
+// That is a big function, which I used for displaying operators and also using them without equal, so if you need to calculate 2 + 2 and then press *;
+function operators(item) {
+  // if you want to continue calculation after pressing =;
+  if (operationTemp == true) {
+    currentOperation = item;
+    displayOperator();
+    operationTemp = false;
+  } else if (
+    // item.value doesn't work here, I know there are other other functions which do same as includes() with multiple options, but I just wanted to use includes();
+    displayTextBack.textContent.includes("+") ||
+    displayTextBack.textContent.includes("-") ||
+    displayTextBack.textContent.includes("*") ||
+    displayTextBack.textContent.includes("/")
+  ) {
+    // You can't divide by 0, but if user doesn't know that, then there will be strange behavior, so I avoided like this: If user divides number by 0, then it will alert them, that it is impossible. (First i created custom alert, but i think this is better);
+    if (displayTextBack.textContent.includes("/") && firstOperand == "0") {
+      alert("'You can't divide by 0!");
+      firstOperand = "";
+      return;
+    }
+    // to change operator in the middle of a calculation;
+    if (firstOperand == "") {
+      displayTextBack.textContent = `${secondOperand} ${item}`;
+      currentOperation = item;
+    } else {
+      // calculating without equal;
+      secondOperand = round(
+        operate(currentOperation, secondOperand, firstOperand)
+      );
+      currentOperation = item;
+      displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
+      firstOperand = "";
+      operation = true;
+    }
+  } else {
+    // Fixing a bug, if you want to change operator in the middle of a calculation;
+    currentOperation = item;
+    displayOperator();
+  }
+}
+
+// Keyboard functionality;
+function keyboard(e) {
+  const keyboardKey = e.key;
+  if (keyboardKey >= 0 && keyboardKey <= 9) addNumbers(keyboardKey);
+  if (keyboardKey === "Delete") removeAc();
+  if (keyboardKey === "Backspace") del();
+  if (keyboardKey === ".") dots();
+  if (keyboardKey === "Enter") equal();
+  if (
+    keyboardKey === "+" ||
+    keyboardKey === "-" ||
+    keyboardKey === "/" ||
+    keyboardKey === "*"
+  )
+    operators(keyboardKey);
+}
+//////////////////////////////
+//      EventListeners      //
+//////////////////////////////
+
+lightBtn.forEach((item) => {
+  item.addEventListener("click", lightMode);
+});
+
+darkBtn.forEach((item) => {
+  item.addEventListener("click", darkMode);
+});
+
+displayBtn.forEach((item) => {
+  item.addEventListener("click", () => {
+    addNumbers(item.value);
+  });
 });
 
 specialBtn.forEach((item) => {
   item.addEventListener("click", () => {
-    if (operationTemp == true) {
-      operation = true;
-      if (firstOperand == "") {
-        firstOperand += temp;
-      }
-
-      currentOperation = item.value;
-      secondOperand = firstOperand;
-      displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
-      temp = firstOperand;
-      firstOperand = "";
-      operationTemp = false;
-    } else if (
-      displayTextBack.textContent.includes("+") ||
-      displayTextBack.textContent.includes("-") ||
-      displayTextBack.textContent.includes("*") ||
-      displayTextBack.textContent.includes("/")
-    ) {
-      if (firstOperand == "") {
-        displayTextBack.textContent = `${secondOperand} ${item.value}`;
-        currentOperation = item.value;
-      } else {
-        secondOperand = round(
-          operate(currentOperation, secondOperand, firstOperand)
-        );
-        currentOperation = item.value;
-        displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
-        displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
-        firstOperand = "";
-        operation = true;
-      }
-    } else {
-      // Fixing a bug, if you want to change operator in the middle of a calculation;
-      operation = true;
-      if (firstOperand == "") {
-        firstOperand += temp;
-      }
-
-      currentOperation = item.value;
-      secondOperand = firstOperand;
-      displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
-      temp = firstOperand;
-      firstOperand = "";
-    }
+    operators(item.value);
   });
 });
 
-specialEqual.addEventListener("click", () => {
-  if (operation == false || firstOperand == "") return;
-  displayTextBack.textContent = `${secondOperand} ${currentOperation} ${firstOperand} =`;
-  let displayOutput = round(
-    operate(currentOperation, secondOperand, firstOperand)
-  );
-  if (String(displayOutput).length >= 17) {
-  } else {
-    displayText.textContent = displayOutput;
-  }
+specialAc.addEventListener("click", removeAc);
 
-  // If user presses another operation when equal button was already pressed, then we need to use that operation on previous answer.
-  firstOperand = displayText.textContent;
-  operationTemp = true;
-});
+specialDel.addEventListener("click", del);
+
+specialDot.addEventListener("click", dots);
+
+specialEqual.addEventListener("click", equal);
+
+window.addEventListener("keydown", keyboard);
