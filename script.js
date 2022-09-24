@@ -20,7 +20,7 @@ const specialEqual = document.querySelector(".special-equal");
 const specialAc = document.querySelector(".special-ac");
 const specialDel = document.querySelector(".special-del");
 
-let firstOperand = "";
+let firstOperand = "0";
 let secondOperand = "";
 let currentOperation;
 let operation = false;
@@ -266,6 +266,7 @@ function keyboard(e) {
   if (keyboardKey === "Backspace") del();
   if (keyboardKey === ".") dots();
   if (keyboardKey === "Enter") equal();
+  if (keyboardKey === "=") equal();
   if (
     keyboardKey === "+" ||
     keyboardKey === "-" ||
