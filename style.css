@@ -194,11 +194,10 @@ body {
 .github-logo-a:visited {
   margin-left: 1rem;
   color: #19acff;
-  transition: all 400ms;
+  transition: all 300ms;
 }
 .github-logo-a:hover,
 .github-logo-a:active {
-  /* rotate: 360deg; */
   translate: 0 -4px;
 }
 
@@ -215,17 +214,13 @@ body {
   background-color: #ccc !important;
   border: 1px solid rgb(172, 172, 172) !important;
 }
-.hover-equal:hover {
-  background-color: #1a9de9 !important;
-}
-.hover:active {
-  scale: 0.98;
-  box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.01);
-}
 
 .hover-gray:active {
   scale: 0.98;
   box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.01);
+}
+.hover-equal:hover {
+  background-color: #1a9de9 !important;
 }
 .hover-equal:active {
   scale: 0.98;
@@ -237,27 +232,26 @@ body {
 /********************************/
 /********************************/
 
-/* .dark-hover:hover {
+.dark-hover:hover {
   background-color: #3c5187 !important;
 }
-.dark-hover-gray:hover {
-  background-color: #444 !important;
-  border: 1px solid #333 !important;
-}
-.dark-hover-equal:hover {
-  background-color: #1a70a1 !important;
-  /* box-shadow: -9px 13px 23px rgba(0, 163, 255, 0.65); 
-} 
-*/
-
 .dark-hover:active {
   scale: 0.98;
   box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.01);
 }
 
+.dark-hover-gray:hover {
+  background-color: #444 !important;
+  border: 1px solid #333 !important;
+}
+
 .dark-hover-gray:active {
   scale: 0.98;
   box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.01);
+}
+.dark-hover-equal:hover {
+  background-color: #1a70a1 !important;
+  /* box-shadow: -9px 13px 23px rgba(0, 163, 255, 0.65); */
 }
 .dark-hover-equal:active {
   scale: 0.98;
@@ -268,6 +262,44 @@ body {
 /*     MEDIA QUERIES     */
 /*************************/
 
+@media (max-width: 1180px) {
+  .hover:hover {
+    background-color: none !important;
+    border: none !important;
+  }
+  .hover-gray:hover {
+    background-color: none !important;
+    border: none !important;
+  }
+  .hover-equal:hover {
+    background-color: none !important;
+  }
+  .dark-hover-gray:hover {
+    background-color: none !important;
+    border: none !important;
+  }
+  .dark-hover-equal:hover {
+    background-color: none !important;
+  }
+  .hover:active {
+    scale: 0.98;
+  }
+  .hover-gray:active {
+    scale: 0.9;
+  }
+  .hover-equal:active {
+    scale: 0.9;
+  }
+  .dark-hover:active {
+    scale: 0.9;
+  }
+  .dark-hover-ray:active {
+    scale: 0.9;
+  }
+  .dark-hover-equal:active {
+    scale: 0.9;
+  }
+}
 @media (max-width: 714px) {
   .calculator-shade {
     display: none;
