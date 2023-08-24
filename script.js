@@ -1,310 +1,236 @@
 "use strict";
 
-const darkDiv = document.querySelector(".dark");
-const lightDiv = document.querySelector(".light");
-const calculator = document.querySelector(".calculator");
-const buttons = document.querySelectorAll(".btn");
-const modsDiv = document.querySelector(".mods-div");
-const specialBtn = document.querySelectorAll(".special-btn");
-const lightBtn = document.querySelectorAll(".light-btn");
-const darkBtn = document.querySelectorAll(".dark-btn");
-const body = document.querySelector("body");
-const calculatorShade = document.querySelector(".calculator-shade");
-const specials = document.querySelectorAll(".specials");
-const displayBtn = document.querySelectorAll(".display-btn");
-const displayTextBack = document.querySelector(".display-text-back");
-const displayText = document.querySelector(".display-text");
-const display = document.querySelector(".display");
-const specialDot = document.querySelector(".special-dot");
-const specialEqual = document.querySelector(".special-equal");
-const specialAc = document.querySelector(".special-ac");
-const specialDel = document.querySelector(".special-del");
+const upperDisplay = document.querySelector("[data-upper-display");
+const lowerDisplay = document.querySelector("[data-lower-display");
+const operations = document.querySelectorAll("[data-operations]");
+const numbers = document.querySelectorAll("[data-numbers]");
+const clearBtn = document.querySelector("[data-clear]");
+const deleteBtn = document.querySelector("[data-delete]");
+const equalsBtn = document.querySelector("[data-equals]");
 
-let firstOperand = "0";
-let secondOperand = "";
-let currentOperation;
-let operation = false;
-let operationTemp;
-let temp;
+const darkBtn = document.querySelector("[data-dark]");
+const lightBtn = document.querySelector("[data-light]");
 
-// Dark screen to be chosen automatically
-window.onload = () => {
-  darkBtn.forEach((item) => {
-    item.click();
-  });
-};
+const root = document.querySelector(":root");
 
-//////////////////////////////
-//        FUNCTIONS         //
-//////////////////////////////
+// / / / / / / /
+// * Main Class
+// / / / / / / /
 
-// turns on a light mode;
-function lightMode() {
-  darkDiv.classList.add("hidden");
-  lightDiv.classList.remove("hidden");
-  specialAc.classList.add("hover-gray");
-  specialDel.classList.add("hover-gray");
-  specialEqual.classList.add("hover-equal");
-  specialAc.classList.remove("dark-hover-gray");
-  specialDel.classList.remove("dark-hover-gray");
-  specialEqual.classList.remove("dark-hover-equal");
-  body.style.backgroundColor = "#daf0ff";
-  calculator.style.background = "#f7f8fb";
-  modsDiv.style.backgroundColor = "hsl(0, 0%, 93%)";
-  calculatorShade.style.backgroundColor = "rgba(96, 190, 255, 0.55)";
-  calculatorShade.style.filter = "blur(123px)";
-  buttons.forEach((item) => {
-    item.style.backgroundColor = "#fffffffc";
-    item.style.border = "1px solid #ffffff";
-    item.classList.add("hover");
-    item.classList.remove("dark-hover");
-  });
-  specialBtn.forEach((item) => {
-    item.style.backgroundColor = "#ade2ff";
-  });
-  specialAc.style.backgroundColor = "#fff";
-  specialDel.style.border = "1px solid #fff";
-  specialDel.style.backgroundColor = "#fffffffc";
-  specials.forEach((item) => {
-    item.style.filter =
-      "brightness(0) saturate(100%) invert(56%) sepia(0%) saturate(0%) hue-rotate(112deg) brightness(94%) contrast(89%)";
-  });
-  specialEqual.style.backgroundColor = "#19acff";
-  display.style.backgroundColor = "#fff";
-}
-
-// turns on a dark mode;
-function darkMode() {
-  darkDiv.classList.remove("hidden");
-  lightDiv.classList.add("hidden");
-  specialAc.classList.remove("hover-gray");
-  specialDel.classList.remove("hover-gray");
-  specialEqual.classList.remove("hover-equal");
-  specialAc.classList.add("dark-hover-gray");
-  specialDel.classList.add("dark-hover-gray");
-  specialEqual.classList.add("dark-hover-equal");
-  body.style.backgroundColor = "#343f46";
-  calculator.style.backgroundColor = "#17181A";
-  modsDiv.style.backgroundColor = "#303136";
-  calculatorShade.style.backgroundColor = "rgba(0, 107, 181, 0.63)";
-  calculatorShade.style.filter = "blur(140px)";
-  buttons.forEach((item) => {
-    item.style.backgroundColor = "#303136";
-    item.style.border = "none";
-    item.classList.remove("hover");
-    item.classList.add("dark-hover");
-  });
-  specialBtn.forEach((item) => {
-    item.style.backgroundColor = "#005DB2";
-  });
-  specialAc.style.backgroundColor = "#616161";
-  specialAc.style.border = "none";
-  specialDel.style.backgroundColor = "#616161";
-  specialDel.style.border = "none";
-  specials.forEach((item) => {
-    item.style.filter =
-      "brightness(0) saturate(100%) invert(85%) sepia(0%) saturate(317%) hue-rotate(145deg) brightness(80%) contrast(84%)";
-  });
-  specialEqual.style.backgroundColor = "#1991FF";
-  display.style.backgroundColor = "#1e1f22";
-}
-
-// calculates a and b with specific operation, if operator = +, a = 3, b = 4, function will return 3 + 4;
-function operate(operator, a, b) {
-  // we can use math operations only on numbers, not strings;
-  a = Number(a);
-  b = Number(b);
-  if (operator == "+") {
-    return a + b;
-  } else if (operator == "-") {
-    return a - b;
-  } else if (operator == "/") {
-    return a / b;
-  } else if (operator == "*") {
-    return a * b;
-  }
-}
-
-// rounds to one thousandth;
-const round = (a) => Math.round(a * 1000) / 1000;
-
-// i had a repeated code and took care of it;
-function displayOperator() {
-  operation = true;
-  if (firstOperand == "") {
-    firstOperand += temp;
+class Calculator {
+  constructor(upperDisplayValue, lowerDisplayValue, currentOperator) {
+    this.upperDisplayValue = upperDisplayValue;
+    this.lowerDisplayValue = lowerDisplayValue;
+    this.currentOperator = currentOperator;
   }
 
-  secondOperand = firstOperand;
-  displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
-  temp = firstOperand;
-  firstOperand = "";
-}
-
-// Displays numbers on calculator;
-function addNumbers(item) {
-  // if numbers are >= 17 stop execution, because there isn't enough space. 17 isn't some magical number, I checked and display has space only for 17 numbers ;
-  if (firstOperand.length >= 17) return;
-  // fix for using dot(.)
-  if (firstOperand.slice(0, 1) == 0 && firstOperand.slice(1, 2) != ".") {
-    firstOperand = firstOperand.slice(1);
+  // Changes upper display value
+  changeUpperDisplay() {
+    upperDisplay.textContent = this.upperDisplayValue;
   }
-  // I change fontSize because there are some cases when numbers still get too big, so i needed to make them smaller;
-  displayText.style.fontSize = "32px";
-  firstOperand += item;
-  displayText.textContent = firstOperand;
-}
 
-// "Ac" button, removes everything on calculator and displays 0;
-function removeAc() {
-  firstOperand = "0";
-  secondOperand = "";
-  displayText.textContent = "0";
-  displayTextBack.textContent = "";
-  operation = false;
-  operationTemp = false;
-  displayText.style.fontSize = "32px";
-}
-
-// removes number one by one;
-function del() {
-  firstOperand = firstOperand.slice(0, -1);
-  displayText.textContent = firstOperand;
-  if (firstOperand == "") firstOperand = "0";
-  if (firstOperand.length < 17) {
-    displayText.style.fontSize = "32px";
+  // Changes lower display value
+  changeLowerDisplay() {
+    lowerDisplay.textContent = this.lowerDisplayValue;
   }
-}
 
-// makes dots work;
-function dots() {
-  // if numbers are >= 17 stop execution, because there isn't enough space.;
-  if (firstOperand.includes(specialDot.value) || firstOperand.length >= 17)
-    return;
-  // if user presses . before 0, then it should automatically display it;
-  if (firstOperand == "") firstOperand = "0";
-  firstOperand += specialDot.value;
-  displayText.textContent = firstOperand;
-}
-
-// equal function;
-function equal() {
-  // same as before, you can't divide by 0;
-  if (displayTextBack.textContent.includes("/") && firstOperand == "0") {
-    alert("'You can't divide by 0!");
-    firstOperand = "";
-    return;
-  }
-  // makes equal unclickable
-  if (operation == false || firstOperand == "") return;
-  // displays our equation in the back;
-  displayTextBack.textContent = `${secondOperand} ${currentOperation} ${firstOperand} =`;
-  // displayOutput is a final value, which we got from our calculation;
-  let displayOutput = round(
-    operate(currentOperation, secondOperand, firstOperand)
-  );
-  // decreasing numbers font size if it is bigger than display;
-  if (String(displayOutput).length >= 17) {
-    displayText.style.fontSize = "26px";
-    displayText.textContent = displayOutput;
-  } else {
-    // if it isn't bigger than we don't need to decrease it;
-    displayText.textContent = displayOutput;
-  }
-  // if user presses another operation when equal button was already pressed, then we need to use that operation on previous answer.
-  firstOperand = displayText.textContent;
-  operationTemp = true;
-  operation = false;
-}
-
-// That is a big function, which I used for displaying operators and also using them without equal, so if you need to calculate 2 + 2 and then press *;
-function operators(item) {
-  // if you want to continue calculation after pressing =;
-  if (operationTemp == true) {
-    currentOperation = item;
-    displayOperator();
-    operationTemp = false;
-  } else if (
-    // item.value doesn't work here, I know there are other other functions which do same as includes() with multiple options, but I just wanted to use includes();
-    displayTextBack.textContent.includes("+") ||
-    displayTextBack.textContent.includes("-") ||
-    displayTextBack.textContent.includes("*") ||
-    displayTextBack.textContent.includes("/")
-  ) {
-    // You can't divide by 0, but if user doesn't know that, then there will be strange behavior, so I avoided like this: If user divides number by 0, then it will alert them, that it is impossible. (First i created custom alert, but i think this is better);
-    if (displayTextBack.textContent.includes("/") && firstOperand == "0") {
-      alert("'You can't divide by 0!");
-      firstOperand = "";
+  // When user clicks on numbers, they show up on lower display
+  addNumbers(nums) {
+    // if ((nums === "0" && this.lowerDisplayValue.slice(0, 1)) === "0") return;
+    if (nums === "." && this.lowerDisplayValue.includes(".")) return;
+    if (nums === "." && this.lowerDisplayValue === "") {
+      this.lowerDisplayValue = "0.";
+      this.changeLowerDisplay();
       return;
     }
-    // to change operator in the middle of a calculation;
-    if (firstOperand == "") {
-      displayTextBack.textContent = `${secondOperand} ${item}`;
-      currentOperation = item;
-    } else {
-      // calculating without equal;
-      secondOperand = round(
-        operate(currentOperation, secondOperand, firstOperand)
-      );
-      currentOperation = item;
-      displayTextBack.textContent = `${secondOperand} ${currentOperation}`;
-      firstOperand = "";
-      operation = true;
+
+    // If user tries to start a number with zeros, this code removes extra ones
+    if (
+      this.lowerDisplayValue.slice(0, 1) === "0" &&
+      !this.lowerDisplayValue.includes(".") &&
+      nums !== "."
+    ) {
+      this.lowerDisplayValue = this.lowerDisplayValue.slice(1, -1);
     }
-  } else {
-    // Fixing a bug, if you want to change operator in the middle of a calculation;
-    currentOperation = item;
-    displayOperator();
+    this.lowerDisplayValue += nums;
+    this.changeLowerDisplay();
+  }
+
+  // When user clicks on operations, numbers move to upper display and lower display clears
+  addOperator(op) {
+    if (this.currentOperator !== "" && this.lowerDisplayValue !== "") {
+      // If user tries to divide by zero, alert will show up
+      if (this.lowerDisplayValue == 0 && this.currentOperator === "÷") {
+        alert('You can"t divide by 0!');
+        return;
+      }
+
+      // If user presses operators instead of equals button, this code will calculate value
+      if (this.currentOperator === "+") {
+        this.upperDisplayValue =
+          Number(this.upperDisplayValue) + Number(this.lowerDisplayValue);
+      } else if (this.currentOperator === "-") {
+        this.upperDisplayValue =
+          Number(this.upperDisplayValue) - Number(this.lowerDisplayValue);
+      } else if (this.currentOperator === "÷") {
+        this.upperDisplayValue =
+          Number(this.upperDisplayValue) / Number(this.lowerDisplayValue);
+      } else if (this.currentOperator === "×") {
+        this.upperDisplayValue =
+          Number(this.upperDisplayValue) * Number(this.lowerDisplayValue);
+      }
+
+      upperDisplay.textContent = this.upperDisplayValue + op;
+      this.currentOperator = op;
+      this.lowerDisplayValue = "";
+      lowerDisplay.textContent = "0";
+      return;
+    }
+
+    this.currentOperator = op;
+
+    // If user clicks operator without inputing numbers, 0 will be selected
+    if (this.lowerDisplayValue === "" && this.upperDisplayValue === "") {
+      this.upperDisplayValue = 0;
+      upperDisplay.textContent = this.upperDisplayValue + this.currentOperator;
+      return;
+    }
+
+    // If user wants to change operator
+    if (this.lowerDisplayValue === "") {
+      upperDisplay.textContent = this.upperDisplayValue + this.currentOperator;
+      return;
+    }
+
+    this.upperDisplayValue = this.lowerDisplayValue;
+    upperDisplay.textContent = this.upperDisplayValue + this.currentOperator;
+    this.lowerDisplayValue = "";
+    lowerDisplay.textContent = "0";
+  }
+
+  // When user presses equals button, this code will calculate final value
+  calculate(firstNum, secondNum, operator) {
+    // Removes extra =
+    if (upperDisplay.textContent.includes("=")) return;
+
+    // If user clicks equals button, when there are no inputs
+    if (this.upperDisplayValue === "") return;
+
+    firstNum = Number(firstNum);
+    secondNum = Number(secondNum);
+
+    // Alert, if user tries to divide by 0
+    if (secondNum == 0 && this.currentOperator === "÷") {
+      alert('You can"t divide by 0!');
+      return;
+    }
+
+    // Calculates based on selected operator
+    let finalValue = 0;
+    if (operator === "+") finalValue = firstNum + secondNum;
+    else if (operator === "-") finalValue = firstNum - secondNum;
+    else if (operator === "÷") finalValue = firstNum / secondNum;
+    else if (operator === "×") finalValue = firstNum * secondNum;
+
+    this.lowerDisplayValue = finalValue;
+    this.changeLowerDisplay();
+    upperDisplay.textContent = `${firstNum} ${operator} ${secondNum} =`;
+    this.currentOperator = "";
+  }
+
+  // Ac button functionality, resets everything
+  clear() {
+    this.upperDisplayValue = "";
+    this.changeUpperDisplay();
+
+    this.lowerDisplayValue = "";
+    lowerDisplay.textContent = "0";
+
+    this.currentOperator = "";
+  }
+
+  // Backspace button functionality, removes one number
+  delete() {
+    // If user removes whole number, 0 will be automaticaly selected
+    if (this.lowerDisplayValue.toString().length === 1) {
+      this.lowerDisplayValue = "0";
+      this.changeLowerDisplay();
+      return;
+    }
+    this.lowerDisplayValue = this.lowerDisplayValue.toString().slice(0, -1);
+    this.changeLowerDisplay();
   }
 }
 
-// Keyboard functionality;
-function keyboard(e) {
+// Creates instance, which will store all values.
+const displayData = new Calculator("", "", "");
+
+// / / / / / / / / / /
+// * Event Listeners
+// / / / / / / / / / /
+
+// Event listener for all numbers
+numbers.forEach((el) => {
+  el.addEventListener("click", () => {
+    displayData.addNumbers(el.textContent);
+  });
+});
+
+// Event listener for all operators
+operations.forEach((el) => {
+  el.addEventListener("click", () => {
+    displayData.addOperator(el.textContent);
+  });
+});
+
+// Event listener for equals button
+equalsBtn.addEventListener("click", () => {
+  displayData.calculate(
+    displayData.upperDisplayValue,
+    displayData.lowerDisplayValue,
+    displayData.currentOperator
+  );
+});
+
+// Event listener for AC button
+clearBtn.addEventListener("click", displayData.clear.bind(displayData));
+
+// Event listener for backspace button
+deleteBtn.addEventListener("click", displayData.delete.bind(displayData));
+
+// Keyboard functionality
+window.addEventListener("keydown", (e) => {
   const keyboardKey = e.key;
-  if (keyboardKey >= 0 && keyboardKey <= 9) addNumbers(keyboardKey);
-  if (keyboardKey === "Delete") removeAc();
-  if (keyboardKey === "Backspace") del();
-  if (keyboardKey === ".") dots();
-  if (keyboardKey === "Enter") equal();
-  if (keyboardKey === "=") equal();
-  if (
-    keyboardKey === "+" ||
-    keyboardKey === "-" ||
-    keyboardKey === "/" ||
-    keyboardKey === "*"
-  )
-    operators(keyboardKey);
-}
-//////////////////////////////
-//      EventListeners      //
-//////////////////////////////
-
-lightBtn.forEach((item) => {
-  item.addEventListener("click", lightMode);
+  if (keyboardKey >= 0 && keyboardKey <= 9) displayData.addNumbers(keyboardKey);
+  if (keyboardKey === ".") displayData.addNumbers(".");
+  if (keyboardKey === "Delete") displayData.clear();
+  if (keyboardKey === "Backspace") displayData.delete();
+  if (keyboardKey === "Enter" || keyboardKey === "=")
+    displayData.calculate(
+      displayData.upperDisplayValue,
+      displayData.lowerDisplayValue,
+      displayData.currentOperator
+    );
+  if (keyboardKey === "+") displayData.addOperator("+");
+  if (keyboardKey === "-") displayData.addOperator("-");
+  if (keyboardKey === "/") displayData.addOperator("÷");
+  if (keyboardKey === "*") displayData.addOperator("×");
 });
 
-darkBtn.forEach((item) => {
-  item.addEventListener("click", darkMode);
+// / / / / / / / / / / / / / / /
+// * Dark and Light mode toggle
+// / / / / / / / / / / / / / / /
+
+darkBtn.addEventListener("click", () => {
+  darkBtn.setAttribute("name", "moon");
+  lightBtn.setAttribute("name", "sunny-outline");
+  root.style.cssText =
+    "  --background-color: #343f46; --calculator-background-color: #17181a; --calculator-shade-background-color: #60beff8c; --buttons-background-color: #303136; --display-background-color: #1e1f22; --operations-background-color: #005db2; --delete-background-color: #606060; --equals-background-color: #1991ff; --delete-color: #a8a8aa; --equals-color: #b2daff; --primary-color: #38b9ff; --hover-color: #3c5187; --hover-delete: #444; --hover-border-color: #3c5187; --hover-border-delete: #444; --hover-equals: #1a70a1;";
 });
 
-displayBtn.forEach((item) => {
-  item.addEventListener("click", () => {
-    addNumbers(item.value);
-  });
+lightBtn.addEventListener("click", () => {
+  lightBtn.setAttribute("name", "sunny");
+  darkBtn.setAttribute("name", "moon-outline");
+  root.style.cssText =
+    "--background-color: #daf0ff; --calculator-background-color: #f7f8fb; --calculator-shade-background-color: #60beff8c; --buttons-background-color: #fff;--display-background-color: #fff;--operations-background-color: #ade2ff;--delete-background-color: #fffffffc;--equals-background-color: #1991ff;--delete-color: #858586;--equals-color: #b2daff;--primary-color: #109dff;--hover-color: #8ee3ff;--hover-delete: #ccc;--hover-border-color: #70bfda;--hover-border-delete: #acacac;--hover-equals: #1581e5;";
 });
-
-specialBtn.forEach((item) => {
-  item.addEventListener("click", () => {
-    operators(item.value);
-  });
-});
-
-specialAc.addEventListener("click", removeAc);
-
-specialDel.addEventListener("click", del);
-
-specialDot.addEventListener("click", dots);
-
-specialEqual.addEventListener("click", equal);
-
-window.addEventListener("keydown", keyboard);

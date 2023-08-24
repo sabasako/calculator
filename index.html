@@ -2,114 +2,77 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> 
-    <link rel="icon" type="image/x-icon" href="icons/calculator-title-icon.ico">
-    <link rel="stylesheet" href="meyerReset.css" />
-    <link rel="stylesheet" href="style.css" />
     <title>Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="icons/calculator-title-icon.ico"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="script.js"></script>
   </head>
   <body>
-    <main class="main">
-      <section class="calculator">
-        <div class="mods-div dark hidden">
-          <ion-icon class="icons light-btn" name="sunny-outline"></ion-icon>
-          <ion-icon class="icons dark-btn" name="moon"></ion-icon>
-        </div>
-        <div class="mods-div light">
-          <ion-icon class="icons light-btn" name="sunny"></ion-icon>
-          <ion-icon class="icons dark-btn" name="moon-outline"></ion-icon>
-        </div>
-        <div class="display">
-          <p class="display-text-back"></p>
-          <p class="display-text"></p>
-        </div>
-        <div class="buttons-div">
-          <button class="btn hover-gray special-ac">
-            <img src="icons/Ac.svg" class="specials" alt="Ac icon" />
-          </button>
-          <button class="btn hover-gray special-del">
-            <img src="icons/Vector.svg" class="specials" alt="delete icon" />
-          </button>
-          <button class="btn hover special-btn special-divide" value="/">
-            <img src="icons/backslash.svg" alt="backslash icon" />
-          </button>
-          <button class="btn hover special-btn special-multiply" value="*">
-            <img src="icons/multiple.svg" alt="multiple icon" />
-          </button>
-          <button class="btn hover display-btn special-7" value = '7'>
-            <img src="icons/7.svg" alt="7 icon" />
-          </button>
-          <button class="btn hover display-btn special-8" value = '8'>
-            <img src="icons/8.svg" alt="8 icon" />
-          </button>
-          <button class="btn hover display-btn special-9" value = '9'>
-            <img src="icons/9.svg" alt="9 icon" />
-          </button>
-          <button class="btn hover special-btn special--" value="-">
-            <img src="icons/-.svg" alt="- icon" />
-          </button>
-          <button class="btn hover display-btn special-4" value = '4'>
-            <img src="icons/4.svg" alt="4 icon" />
-          </button>
-          <button class="btn hover display-btn special-5" value = '5'>
-            <img src="icons/5.svg" alt="5 icon" />
-          </button>
-          <button class="btn hover display-btn special-6" value = '6'>
-            <img src="icons/6.svg" alt="6 icon" />
-          </button>
-          <button class="btn hover special-btn special-plus" value="+">
-            <img src="icons/+.svg" alt="+ icon" />
-          </button>
-          <button class="btn hover display-btn special-1" value = '1'>
-            <img src="icons/1.svg" alt="1 icon" />
-            </svg>
-          </button>
-          <button class="btn hover display-btn special-2" value = '2'>
-            <img src="icons/2.svg" alt="2 icon" />
-
-          </button>
-          <button class="btn hover display-btn special-3" value = '3'>
-            <img src="icons/3.svg" alt="3 icon" />
-
-          </button>
-          <button class="btn hover-equal special-equal">
-            <img src="icons/=.svg" alt="equal icon" />
-          </button>
-          <button class="btn hover special-zero display-btn" value = '0'>
-            <img src="icons/0.svg" alt="0 icon" />
-            </svg>
-          </button>
-          <button class="btn hover special-dot" value = '.'>
-            <img src="icons/Rectangle 8.svg" alt="dot icon" />
-          </button>
-        </div>
-      </section>
-      <section class="calculator-shade"></section>
+    <main>
+      <div class="modes">
+        <ion-icon data-light name="sunny-outline"></ion-icon>
+        <ion-icon data-dark name="moon"></ion-icon>
+      </div>
+      <div class="display">
+        <div data-upper-display class="upper-display"></div>
+        <div data-lower-display class="lower-display">0</div>
+      </div>
+      <button data-clear class="delete">Ac</button>
+      <button data-delete class="delete">
+        <ion-icon id="backspace-icon" name="backspace-outline"></ion-icon>
+      </button>
+      <button data-operations class="operations">÷</button>
+      <button data-operations class="operations">×</button>
+      <button data-numbers class="numbers">7</button>
+      <button data-numbers class="numbers">8</button>
+      <button data-numbers class="numbers">9</button>
+      <button data-operations class="operations">-</button>
+      <button data-numbers class="numbers">4</button>
+      <button data-numbers class="numbers">5</button>
+      <button data-numbers class="numbers">6</button>
+      <button data-operations class="operations plus">+</button>
+      <button data-numbers class="numbers">1</button>
+      <button data-numbers class="numbers">2</button>
+      <button data-numbers class="numbers">3</button>
+      <button data-numbers class="numbers zero">0</button>
+      <button data-numbers class="numbers">.</button>
+      <button data-equals class="equals">=</button>
+      <div class="calculator-shade"></div>
     </main>
-    <footer class="footer">
-      <p class="copyright">
-        Copyright &copy; <script>document.write(new Date().getFullYear())</script> sabasako<a
+
+    <footer>
+      <p>
+        Copyright &copy;
+        <script>
+          document.write(new Date().getFullYear());
+        </script>
+        <a
           href="https://github.com/sabasako/"
           class="github-logo-a"
           target="_blank"
-          ><ion-icon class="github-logo" name="logo-github"></ion-icon
+          >sabasako <ion-icon class="github-logo" name="logo-github"></ion-icon
         ></a>
       </p>
     </footer>
-    <!-- <div class="background"></div>
-    <div class="divide-zero">You can't divide by 0!</div> -->
+
     <script
       type="module"
-      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
     ></script>
     <script
       nomodule
-      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
     ></script>
-    <script src="script.js"></script>
   </body>
 </html>
